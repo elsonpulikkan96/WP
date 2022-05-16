@@ -10,6 +10,10 @@ Compenents.
 
 ######### Display generated passwords to the user #########
 
+touch wp.sh
+chmod +x wp.sh
+bash wp.sh
+
 
 
 
