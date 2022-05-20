@@ -59,8 +59,8 @@ sudo service ssh restart && sudo service ssh restart
 
 
 ######Display generated passwords to the user #########
-printf "New Wordpress Database Name:\n\n $db_name" 
-printf "New Wordpress Database User:\n\n $db_user"
-printf "New WP Database User Password:\n\n $db_password"
-printf "Mysql root password:\n\n" $mysqlrootpass
+printf "New Wordpress Database Name:\n\n $db_name\n" 
+printf "New Wordpress Database User:\n\n $db_user\n"
+printf "New WP Database User Password:\n\n $db_password\n"
+printf "Mysql root password:\n\n" $mysqlrootpass\n
 printf "Copy paste this Wordpress login URL on a Web Browser : \n\n http://$ip\n\n"
