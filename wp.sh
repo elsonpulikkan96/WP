@@ -63,4 +63,4 @@ printf "New Wordpress Database Name:\n\n $db_name"
 printf "New Wordpress Database User:\n\n $db_user"
 printf "New WP Database User Password:\n\n $db_password"
 printf "Mysql root password:\n\n" $mysqlrootpass
-printf "Wordpress login URL:\n\n https://$ip"
+printf "Copy paste this Wordpress login URL on a Web Browser : \n\n http://$ip\n\n"
