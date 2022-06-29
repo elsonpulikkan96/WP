@@ -1,7 +1,7 @@
 #/bin/bash
 sudo hostnamectl set-hostname elson-devops.com
 sudo apt-get update -y && apt-get upgrade -y
-sudo apt-get install net-tools lynx curl apache2 telnet -y
+sudo apt-get install net-tools lynx curl apache2 telnet inetutils-traceroute awscli -y
 sudo systemctl enable apache2
 sudo useradd -p $(openssl passwd -1 Pass@2022) --shell /bin/bash elson
 sudo mkdir /home/elson
