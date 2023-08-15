@@ -136,6 +136,4 @@ EOL
 systemctl reload nginx && systemctl restart nginx
 
 printf "\n"
-printf "\n"
-
 printf "Copy paste this Tomcat login URL on a Web Browser : \n\n http://$ip\n\n"
