@@ -4,7 +4,7 @@
 #######Initial Server setup, SSH Hardening, Install LAMP stack#########
 sudo hostnamectl set-hostname elson-wp.com
 sudo apt-get update -y && apt-get upgrade -y
-sudo apt-get install net-tools lynx unzip zip curl apache2 php awscli mysql-server mysql-client php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip php-mysql -y
+sudo apt-get install net-tools lynx unzip zip curl apache2 php php8.1-fpm awscli mysql-server mysql-client php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip php-mysql -y
 sudo systemctl enable apache2
 sudo useradd -p $(openssl passwd -1 Pass@2022) --shell /bin/bash elson
 sudo mkdir /home/elson
