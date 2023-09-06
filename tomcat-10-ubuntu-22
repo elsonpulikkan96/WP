@@ -134,3 +134,9 @@ systemctl reload nginx && systemctl restart nginx
 
 printf "\n"
 printf "Copy paste this Tomcat login URL on a Web Browser : \n\n http://$ip\n\n"
+printf "\n"
+
+Print "Download sample war from the below url and deploy using UI manager or move the war file to your CATALINA_BASE/web apps directory"
+printf "\n"
+
+print "https://tomcat.apache.org/tomcat-10.1-doc/appdev/sample/"
