@@ -4,7 +4,7 @@ sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install default-jdk nginx net-tools -y
 sudo useradd -m -d /opt/tomcat -U -s /bin/false tomcat
 cd /tmp
-wget https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.12/bin/apache-tomcat-10.1.12.tar.gz
+wget https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.13/bin/apache-tomcat-10.1.13.tar.gz
 sudo tar xzvf apache-tomcat-10*tar.gz -C /opt/tomcat --strip-components=1
 
 
