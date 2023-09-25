@@ -2,7 +2,9 @@
 ####auther:elsonpulikkan@gmail.com################
 
 #######Initial Server setup, SSH Hardening, Install LAMP stack#########
-sudo hostnamectl set-hostname elson-wp.com
+sudo hostnamectl set-hostname oru-mairan.com
+sudo echo "ClientAliveInterval 3600" >> /etc/ssh/ssh_config
+sudo service ssh restart && sudo service sshd restart
 sudo apt-get update -y && apt-get upgrade -y
 sudo apt-get install net-tools lynx unzip zip curl apache2 php php8.1-fpm awscli mysql-server mysql-client php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip php-mysql -y
 sudo systemctl enable apache2
