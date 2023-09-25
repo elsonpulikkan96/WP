@@ -19,8 +19,8 @@ sudo sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
 #sudo echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 sudo echo "ServerAliveInterval 3600" >> /etc/ssh/ssh_config
 sudo echo "ServerAliveCountMax=2" >> /etc/ssh/ssh_config
-systemctl restart ssh
-systemctl restart sshd
+sudo systemctl restart ssh
+sudo systemctl restart sshd
 sudo apt-get update -y && apt-get upgrade -y
 sudo apt-get install net-tools lynx unzip zip curl apache2 -y 
 sudo systemctl enable apache2
