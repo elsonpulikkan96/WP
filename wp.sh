@@ -2,7 +2,7 @@
 ####auther:elsonpulikkan@gmail.com################
 
 #######Initial Server , SSH Setup, Install APache#########
-sudo hostnamectl set-hostname  mywp.com
+sudo hostnamectl set-hostname mywp.com
 ip=`wget -qO - icanhazip.com`
 username="elson"
 random_password=$(openssl rand -base64 12)
