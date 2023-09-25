@@ -50,7 +50,8 @@ sudo echo 'elson  ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 sudo sed -i 's/#Port 22/Port 1243/g' /etc/ssh/sshd_config
 sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 sudo sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
-sudo echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+#sudo echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+sudo systemctl restart sshd
 echo "User '$elson' created on the server with random password: $random_password"
 sudo printf "\n"
 sudo echo "If you're a human, Try login SSH by the following command :  ssh elson@$ip -p1243"
