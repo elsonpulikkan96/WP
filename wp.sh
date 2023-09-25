@@ -1,21 +1,33 @@
 #/bin/bash
 ####auther:elsonpulikkan@gmail.com################
 
-#######Initial Server setup, SSH Hardening, Install LAMP stack#########
+#######Initial Server , SSH Setup, Install APache#########
+sudo hostnamectl set-hostname  mywp.com
 ip=`wget -qO - icanhazip.com`
 username="elson"
 random_password=$(openssl rand -base64 12)
 sudo useradd -m -s /bin/bash "$username"
 echo "$username:$random_password" | sudo chpasswd
-sudo hostnamectl set-hostname oru-mairan.com
-sudo echo "ClientAliveInterval 3600" >> /etc/ssh/ssh_config
-sudo service ssh restart && sudo service sshd restart
+sudo mkdir /home/elson
+sudo cp /root/.bashrc /home/elson
+sudo chown -R elson:elson /home/elson
+sudo chmod 644 /etc/sudoers
+sudo echo 'elson  ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+sudo sed -i 's/#Port 22/Port 1243/g' /etc/ssh/sshd_config
+sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+sudo sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
+#sudo echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+sudo echo "ServerAliveInterval 3600" >> /etc/ssh/ssh_config
+sudo echo "ServerAliveCountMax=2" >> /etc/ssh/ssh_config
+systemctl restart ssh
+systemctl restart sshd
 sudo apt-get update -y && apt-get upgrade -y
 sudo apt-get install net-tools lynx unzip zip curl apache2 -y 
 sudo systemctl enable apache2
 sudo systemctl status apache2
 sudo cat /dev/null > /var/www/html/index.html
 
+####### Adds a custom html page to the default httpd page #########
 
 orumairan=$(cat <<EOF
 <!DOCTYPE html>
@@ -41,17 +53,6 @@ EOF
 )
 sudo echo "$orumairan" > /var/www/html/index.html
 sudo systemctl restart apache2
-sudo mkdir /home/elson
-sudo cp /root/.bashrc /home/elson
-sudo chown -R elson:elson /home/elson
-sudo systemctl restart apache2
-sudo chmod 644 /etc/sudoers
-sudo echo 'elson  ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-sudo sed -i 's/#Port 22/Port 1243/g' /etc/ssh/sshd_config
-sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-sudo sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
-#sudo echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
-sudo systemctl restart sshd
 echo "User '$elson' created on the server with random password: $random_password"
 sudo printf "\n"
 sudo echo "If you're a human, Try login SSH by the following command :  ssh elson@$ip -p1243"
@@ -60,7 +61,8 @@ sudo printf "Paste this Pub. IP address on your browser to login oru-marian.com 
 
 
 
-#########Wordpress Files download ,Database config , Wordpress SALT& Apache #########
+#########Wordpress + LAMP  Files download ,Database config , Wordpress SALT& Apache restart #########
+sudu rm -rf /var/www/html/index.html
 sudo apt-get install php php8.1-fpm awscli mysql-server mysql-client php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip php-mysql -y
 systemctl enable mysql
 install_dir="/var/www/html"
@@ -71,7 +73,6 @@ db_password=`date |md5sum |cut -c '1-12'`
 sleep 1
 mysqlrootpass=`date |md5sum |cut -c '1-12'`
 sleep 1
-rm /var/www/html/index.html
 echo "Downloading WordPress"
 cd /tmp/ && wget "http://wordpress.org/latest.tar.gz";
 /bin/tar -C $install_dir -zxf /tmp/latest.tar.gz --strip-components=1
