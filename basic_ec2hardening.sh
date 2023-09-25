@@ -18,7 +18,6 @@ sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/
 sudo sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
 #sudo echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 sudo echo "ClientAliveInterval 3600" >> /etc/ssh/ssh_config
-
 sudo echo "ServerAliveCountMax=2" >> /etc/ssh/ssh_config
 sudo systemctl restart ssh
 sudo systemctl restart sshd
