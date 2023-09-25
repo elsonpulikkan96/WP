@@ -2,13 +2,45 @@
 ####auther:elsonpulikkan@gmail.com################
 
 #######Initial Server setup, SSH Hardening, Install LAMP stack#########
+ip=`wget -qO - icanhazip.com`
+username="elson"
+random_password=$(openssl rand -base64 12)
+sudo useradd -m -s /bin/bash "$username"
+echo "$username:$random_password" | sudo chpasswd
 sudo hostnamectl set-hostname oru-mairan.com
 sudo echo "ClientAliveInterval 3600" >> /etc/ssh/ssh_config
 sudo service ssh restart && sudo service sshd restart
 sudo apt-get update -y && apt-get upgrade -y
-sudo apt-get install net-tools lynx unzip zip curl apache2 php php8.1-fpm awscli mysql-server mysql-client php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip php-mysql -y
+sudo apt-get install net-tools lynx unzip zip curl apache2 -y 
 sudo systemctl enable apache2
-sudo useradd -p $(openssl passwd -1 Pass@2022) --shell /bin/bash elson
+sudo systemctl status apache2
+sudo cat /dev/null > /var/www/html/index.html
+
+
+orumairan=$(cat <<EOF
+<!DOCTYPE html>
+<html>
+    <h1>It Works.! oru-mairan.com</h1>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tears of Joy</title>
+    <style>
+        /* Add some CSS to style the emoji */
+        .tears-of-joy {
+            font-size: 48px;
+            color: #00BFFF; /* Change the color as desired */
+        }
+    </style>
+</head>
+<body>
+    <div class="tears-of-joy">&#128514;</div>
+</body>
+</html>
+EOF
+)
+sudo echo "$orumairan" > /var/www/html/index.html
+sudo systemctl restart apache2
 sudo mkdir /home/elson
 sudo cp /root/.bashrc /home/elson
 sudo chown -R elson:elson /home/elson
@@ -19,11 +51,17 @@ sudo sed -i 's/#Port 22/Port 1243/g' /etc/ssh/sshd_config
 sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 sudo sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
 sudo echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+echo "User '$elson' created on the server with random password: $random_password"
+sudo printf "\n"
+sudo echo "If you're a human, Try login SSH by the following command :  ssh elson@$ip -p1243"
+sudo printf "\n"
+sudo printf "Paste this Pub. IP address on your browser to login oru-marian.com : \n\n http://$ip\n\n"
+
 
 
 #########Wordpress Files download ,Database config , Wordpress SALT& Apache #########
+sudo apt-get install php php8.1-fpm awscli mysql-server mysql-client php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip php-mysql -y
 systemctl enable mysql
-ip=`wget -qO - icanhazip.com`
 install_dir="/var/www/html"
 ip=`wget -qO - icanhazip.com`
 db_name="wpdb"
