@@ -24,42 +24,8 @@ sudo systemctl restart sshd
 sudo apt-get update -y && apt-get upgrade -y
 sudo apt-get install net-tools lynx unzip zip curl apache2 -y 
 sudo systemctl enable apache2
-sudo systemctl status apache2
-sudo cat /dev/null > /var/www/html/index.html
-
-####### Adds a custom html page to the default httpd page #########
-
-orumairan=$(cat <<EOF
-<!DOCTYPE html>
-<html>
-    <h1>It Works.! oru-mairan.com</h1>
-
-<head>
-    <meta charset="UTF-8">
-    <title>Tears of Joy</title>
-    <style>
-        /* Add some CSS to style the emoji */
-        .tears-of-joy {
-            font-size: 48px;
-            color: #00BFFF; /* Change the color as desired */
-        }
-    </style>
-</head>
-<body>
-    <div class="tears-of-joy">&#128514;</div>
-</body>
-</html>
-EOF
-)
-sudo echo "$orumairan" > /var/www/html/index.html
 sudo systemctl restart apache2
-echo "User '$elson' created on the server with random password: $random_password"
-sudo printf "\n"
-sudo echo "If you're a human, Try login SSH by the following command :  ssh elson@$ip -p1243"
-sudo printf "\n"
-sudo printf "Paste this Pub. IP address on your browser to login oru-marian.com : \n\n http://$ip\n\n"
-
-
+sudo systemctl status apache2
 
 #########Wordpress + LAMP  Files download ,Database config , Wordpress SALT& Apache restart #########
 sudu rm -rf /var/www/html/index.html
@@ -101,8 +67,13 @@ sudo service ssh restart && sudo service ssh restart
 
 
 ######Display generated passwords to the user #########
+sudo printf "\n"
+echo "User '$elson' created on the server with random password: $random_password"
+sudo printf "\n"
+sudo echo "If you're a human, Try login SSH by the following command:  ssh elson@$ip -p1243"
+sudo printf "\n"
 printf "New Wordpress Database Name:\n\n $db_name\n" 
 printf "New Wordpress Database User:\n\n $db_user\n"
 printf "New WP Database User Password:\n\n $db_password\n"
 printf "Mysql root password:\n\n" $mysqlrootpass\n
-printf "Copy paste this Wordpress login URL on a Web Browser : \n\n http://$ip\n\n"
+printf "Copy paste this Wordpress login URL on a Web Browser: \n\n http://$ip\n\n"
