@@ -1,6 +1,6 @@
 #/bin/bash
 ####auther:elsonpulikkan@gmail.com################
-
+#######*** ALWAYS RUN THIS SCRIPT AS ROOT USER**########
 #######Initial Server , SSH Setup, Install APache#########
 sudo hostnamectl set-hostname mywp.com
 ip=`wget -qO - icanhazip.com`
@@ -53,8 +53,11 @@ EOF
 )
 sudo echo "$orumairan" > /var/www/html/index.html
 sudo systemctl restart apache2
+sudo printf "\n"
 echo "User '$elson' created on the server with random password: $random_password"
 sudo printf "\n"
 sudo echo "If you're a human, Try login SSH by the following command :  ssh elson@$ip -p1243"
 sudo printf "\n"
-sudo printf "Paste this Pub. IP address on your browser to see oru-marian.com : \n\n http://$ip\n\n"
+sudo printf "Paste this Pub. IP address on your browser to see HTTPD server is working: \n\n http://$ip\n\n"
+sudo printf "\n"
+
