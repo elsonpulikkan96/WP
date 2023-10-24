@@ -1,0 +1,107 @@
+#/bin/bash
+
+sudo hostnamectl set-hostname mywp.com
+ip=$(wget -qO - icanhazip.com)
+username="wpuser"
+random_password=$(openssl rand -base64 12)
+sudo useradd -m -s /bin/bash "$username"
+echo "$username:$random_password" | sudo chpasswd
+sudo cp /root/.bashrc /home/wpuser
+sudo chown -R wpuser:wpuser /home/wpuser
+sudo chmod 644 /etc/sudoers
+sudo echo 'wpuser  ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+sudo sed -i 's/#Port 22/Port 1243/g' /etc/ssh/sshd_config
+sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+sudo sed -i 's/disable_root: true/disable_root: false/g' /etc/cloud/cloud.cfg
+sudo echo "ServerAliveInterval 3600" >> /etc/ssh/ssh_config
+sudo echo "ServerAliveCountMax=2" >> /etc/ssh/ssh_config
+sudo systemctl restart ssh
+sudo systemctl restart sshd
+sudo apt-get update -y && apt-get upgrade -y
+sudo apt-get install net-tools lynx unzip zip curl nginx -y 
+sudo systemctl enable nginx
+sudo systemctl restart nginx
+sudo systemctl status nginx
+
+#########WordPress + LEMP  Files download ,Database config , WordPress SALT& Nginx restart #########
+sudo rm -rf /var/www/html/index.nginx-debian.html
+sudo apt-get install mysql-server mysql-client php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip -y
+sudo systemctl enable mysql
+install_dir="/var/www/html"
+ip=$(wget -qO - icanhazip.com)
+db_name="wpdb"
+db_user="wpuser"
+db_password=$(date |md5sum |cut -c '1-12')
+sleep 1
+mysqlrootpass=$(date |md5sum |cut -c '1-12')
+sleep 1
+echo "Downloading WordPress"
+touch /var/log/nginx/mysite.com_error.log
+touch /var/log/nginx/mysite.com_access.log
+cd /tmp/ && wget "https://wordpress.org/wordpress-6.2.3.tar.gz";
+/bin/tar -C $install_dir -zxf /tmp/wordpress-6.2.3.tar.gz --strip-components=1
+mv $install_dir/wp-config-sample.php $install_dir/wp-config.php
+sed -i s/database_name_here/$db_name/g $install_dir/wp-config.php
+sed -i s/username_here/$db_user/g $install_dir/wp-config.php
+sed -i s/password_here/$db_password/g $install_dir/wp-config.php
+cat << EOF >> $install_dir/wp-config.php
+define('FS_METHOD', 'direct');
+EOF
+grep -A50 'table_prefix' $install_dir/wp-config.php > /tmp/wp-tmp-config
+sed -i '/**#@/,/$p/d' $install_dir/wp-config.php
+lynx --dump -width 200 https://api.wordpress.org/secret-key/1.1/salt/ >> $install_dir/wp-config.php
+cat /tmp/wp-tmp-config >> $install_dir/wp-config.php && rm /tmp/wp-tmp-config -f
+/usr/bin/mysql -e "USE mysql;"
+/usr/bin/mysql -e "ALTER USER root@localhost IDENTIFIED BY '$mysqlrootpass';"
+/usr/bin/mysql -e "CREATE DATABASE $db_name;"
+/usr/bin/mysql -e "CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password';"
+/usr/bin/mysql -e "GRANT ALL ON *.* TO '$db_user'@'localhost';"
+/usr/bin/mysql -e "FLUSH PRIVILEGES;"
+sudo find $install_dir -type d -exec chmod 755 {} \;
+sudo find $install_dir -type f -exec chmod 644 {} \;
+sudo chown -R www-data:www-data $install_dir
+sudo rm /etc/nginx/sites-enabled/default
+sudo rm /etc/nginx/sites-available/default
+touch /etc/nginx/conf.d/mysite.com.conf
+
+# Configure Nginx virtual host for WordPress
+sudo cat > /etc/nginx/conf.d/mysite.com.conf <<EOF
+server {
+    listen 80;
+    listen [::]:80;
+    root /var/www/html;
+    index index.php index.html index.htm;
+    server_name mysite.com www.mysite.com;
+    error_log /var/log/nginx/mysite.com_error.log;
+    access_log /var/log/nginx/mysite.com_access.log;
+    client_max_body_size 100M;
+
+    location / {
+        try_files \$uri \$uri/ /index.php?\$args;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+EOF
+
+sudo nginx -t
+sudo systemctl restart nginx && sudo systemctl restart mysql
+sudo service ssh restart && sudo service ssh restart
+sudo service php8.1-fpm restart
+
+######Display generated passwords to the user #########
+sudo printf "\n"
+echo "User '$wpuser' created on the server with random password: $random_password"
+sudo printf "\n"
+sudo echo "If you're a human, Try login SSH by the following command:  ssh wpuser@$ip -p1243"
+sudo printf "\n"
+printf "New WordPress Database Name:\n\n $db_name\n" 
+printf "New WordPress Database User:\n\n $db_user\n"
+printf "New WP Database User Password:\n\n $db_password\n"
+printf "MySQL root password:\n\n $mysqlrootpass\n"
+printf "Copy paste this WordPress login URL on a Web Browser: \n\n http://$ip\n\n"
